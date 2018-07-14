@@ -7,17 +7,13 @@ import java.util.ArrayList;
 @Table(name = "projects")
 public class Project {
 
+    private int id;
+    private String title;
+    private ArrayList<Entry> entries;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "project_id")
-    private int id;
-
-    @Column(name = "project_title", length = 100, nullable = false)
-    private String title;
-
-    @OneToMany(mappedBy = "project")
-    private ArrayList<Entry> entries;
-
     public int getId() {
         return id;
     }
@@ -26,11 +22,22 @@ public class Project {
         this.id = id;
     }
 
+    @Column(name = "project_title", length = 100, nullable = false)
+
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "project")
+    public ArrayList<Entry> getEntries() {
+        return entries;
+    }
+
+    public void setEntries(ArrayList<Entry> entries) {
+        this.entries = entries;
     }
 }
