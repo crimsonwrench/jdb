@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Table(name = "entries")
 public class Entry {
 
-
     private int id;
     private User user;
     private Project project;
