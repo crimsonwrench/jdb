@@ -1,5 +1,6 @@
 package com.mick.Entity;
 
+import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
 
@@ -11,6 +12,16 @@ public class Entry {
     private User user;
     private Project project;
     private String reportText;
+
+
+    public Entry() {}
+
+    public Entry(int id, User user, Project project, String reportText) {
+        this.id = id;
+        this.user = user;
+        this.project = project;
+        this.reportText = reportText;
+    }
 
     @Id
     @GeneratedValue
