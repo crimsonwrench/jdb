@@ -1,12 +1,14 @@
 package com.mick.Dao;
 
-import org.springframework.stereotype.Repository;
+import com.mick.Entity.Entry;
+import com.mick.Entity.Project;
+import com.mick.Entity.User;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.Collection;
 
-@Repository
-public class BugTrackingDao {
-    @PersistenceContext
-    private EntityManager entityManager;
+public interface BugTrackingDao {
+
+    Entry getEntryByProject(Project project);
+    Entry getEntryByUser(User user);
+    Collection<Entry> getAllEntries();
 }
