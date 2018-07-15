@@ -1,7 +1,7 @@
 package com.mick.Entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.util.Set;
 
 @Entity
 @Table(name = "projects")
@@ -9,7 +9,7 @@ public class Project {
 
     private int id;
     private String title;
-    private ArrayList<Entry> entries;
+    private Set<Entry> entries;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,11 +33,16 @@ public class Project {
     }
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "project")
-    public ArrayList<Entry> getEntries() {
+    public Set<Entry> getEntries() {
         return entries;
     }
 
-    public void setEntries(ArrayList<Entry> entries) {
+    public void setEntries(Set<Entry> entries) {
         this.entries = entries;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%d\t%s", getId(), getTitle());
     }
 }

@@ -1,6 +1,5 @@
 package com.mick.Entity;
 
-import org.springframework.data.annotation.Id;
 
 import javax.persistence.*;
 
@@ -57,4 +56,9 @@ public class Entry {
     public String getReportText() { return reportText; }
 
     public void setReportText(String reportText) { this.reportText = reportText; }
+
+    @Override
+    public String toString() {
+        return String.format("%d\t%d\t%d\t%s", id, project.getId(), user.getId(), reportText);
+    }
 }
