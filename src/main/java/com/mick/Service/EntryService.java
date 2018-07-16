@@ -6,18 +6,19 @@ import com.mick.Entity.User;
 import com.mick.Repository.EntryRepository;
 import com.mick.Repository.ProjectRepository;
 import com.mick.Repository.UserRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BugTrackingService {
+public class EntryService {
 
     private final EntryRepository entryRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
 
-    public BugTrackingService(EntryRepository entryRepository, UserRepository userRepository, ProjectRepository projectRepository) {
+    @Autowired
+    public EntryService(EntryRepository entryRepository, UserRepository userRepository, ProjectRepository projectRepository) {
         this.entryRepository = entryRepository;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
@@ -53,27 +54,13 @@ public class BugTrackingService {
         }
         return result.toString();
     }
-
-    public String printUsers(){
-        StringBuilder result = new StringBuilder();
-
-        result.append("uid\tname\n");
-
-        for(User user : userRepository.findAll()){
-            result.append(user.toString()).append("\n");
-        }
-        return result.toString();
+    public void insertEntry(int uid, int pid, String message){
+        User user = userRepository.findById(uid).get();
+        Project project = projectRepository.findById(pid).get();
+        entryRepository.save(new Entry(user, project, message));
     }
-
-    public String printProjects(){
-        StringBuilder result = new StringBuilder();
-
-        result.append("pid\ttitle\n");
-
-        for(Project project : projectRepository.findAll()){
-            result.append(project.toString()).append("\n");
-        }
-        return result.toString();
+    public User findById(int id){
+        return userRepository.findById(id).get();
     }
 }
 
