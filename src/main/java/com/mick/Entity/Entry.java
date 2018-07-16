@@ -7,24 +7,21 @@ import javax.persistence.*;
 @Table(name = "entries")
 public class Entry {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "entry_id")
     private int id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
     private Project project;
+
     private String reportText;
 
-
-    public Entry() {}
-
-    public Entry(int id, User user, Project project, String reportText) {
-        this.id = id;
-        this.user = user;
-        this.project = project;
-        this.reportText = reportText;
-    }
-
-    @Id
-    @GeneratedValue
-    @Column(name = "entry_id")
     public int getId() {
         return id;
     }
@@ -33,8 +30,6 @@ public class Entry {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     public User getUser() {
         return user;
     }
@@ -43,8 +38,6 @@ public class Entry {
         this.user = user;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id")
     public Project getProject() {
         return project;
     }
@@ -61,4 +54,11 @@ public class Entry {
     public String toString() {
         return String.format("%d\t%d\t%d\t%s", id, project.getId(), user.getId(), reportText);
     }
+
+    public Entry(User user, Project project, String reportText) {
+        this.user = user;
+        this.project = project;
+        this.reportText = reportText;
+    }
+    public Entry() {}
 }

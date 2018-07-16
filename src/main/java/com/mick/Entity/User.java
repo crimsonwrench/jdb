@@ -7,13 +7,17 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
 
-    private int id;
-    private String name;
-    private Set<Entry> entries;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
+    private int id;
+
+    @Column(name = "user_name", length = 100, nullable = false)
+    private String name;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Entry> entries;
+
     public int getId() {
         return id;
     }
@@ -22,7 +26,6 @@ public class User {
         this.id = id;
     }
 
-    @Column(name = "user_name", length = 100, nullable = false)
     public String getName() {
         return name;
     }
@@ -31,7 +34,6 @@ public class User {
         this.name = name;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     public Set<Entry> getEntries() {
         return entries;
     }

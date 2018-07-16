@@ -7,13 +7,17 @@ import java.util.Set;
 @Table(name = "projects")
 public class Project {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "project_id")
     private int id;
+
+    @Column(name = "project_title", length = 100, nullable = false)
     private String title;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "project")
     private Set<Entry> entries;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "project_id")
     public int getId() {
         return id;
     }
@@ -21,8 +25,6 @@ public class Project {
     public void setId(int id) {
         this.id = id;
     }
-
-    @Column(name = "project_title", length = 100, nullable = false)
 
     public String getTitle() {
         return title;
@@ -32,7 +34,6 @@ public class Project {
         this.title = title;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "project")
     public Set<Entry> getEntries() {
         return entries;
     }
@@ -45,4 +46,9 @@ public class Project {
     public String toString() {
         return String.format("%d\t%s", getId(), getTitle());
     }
+
+    public Project(String title) {
+        this.title = title;
+    }
+    public Project() {}
 }
