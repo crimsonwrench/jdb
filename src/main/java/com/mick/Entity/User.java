@@ -44,4 +44,9 @@ public class User {
     public String toString() {
         return String.format("%d\t%s", getId(), getName());
     }
+
+    public User(String name) {
+        this.name = name;
+    }
+    public User() {}
 }
