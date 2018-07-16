@@ -4,12 +4,12 @@ package com.mick.Entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "entries")
-public class Entry {
+@Table(name = "issues")
+public class Issue {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "entry_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "issue_id")
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,6 +34,7 @@ public class Entry {
         return user;
     }
 
+    @JoinColumn(name = "user_id")
     public void setUser(User user) {
         this.user = user;
     }
@@ -55,10 +56,10 @@ public class Entry {
         return String.format("%d\t%d\t%d\t%s", id, project.getId(), user.getId(), reportText);
     }
 
-    public Entry(User user, Project project, String reportText) {
+    public Issue(User user, Project project, String reportText) {
         this.user = user;
         this.project = project;
         this.reportText = reportText;
     }
-    public Entry() {}
+    public Issue() {}
 }

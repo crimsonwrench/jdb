@@ -8,15 +8,15 @@ import java.util.Set;
 public class Project {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "project_id")
     private int id;
 
     @Column(name = "project_title", length = 100, nullable = false)
     private String title;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "project")
-    private Set<Entry> entries;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true)
+    private Set<Issue> issues;
 
     public int getId() {
         return id;
@@ -34,12 +34,12 @@ public class Project {
         this.title = title;
     }
 
-    public Set<Entry> getEntries() {
-        return entries;
+    public Set<Issue> getIssues() {
+        return issues;
     }
 
-    public void setEntries(Set<Entry> entries) {
-        this.entries = entries;
+    public void setIssues(Set<Issue> issues) {
+        this.issues = issues;
     }
 
     @Override
