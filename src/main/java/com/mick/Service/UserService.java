@@ -2,17 +2,14 @@ package com.mick.Service;
 
 import com.mick.Entity.User;
 import com.mick.Repository.UserRepository;
+import com.mick.Utility.CmdHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Scanner;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-
-    private Scanner scan = new Scanner(System.in);
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -22,42 +19,53 @@ public class UserService {
     public String printUsers(){
         StringBuilder result = new StringBuilder();
 
-        result.append("uid\tname\n");
-
+        result.append(CmdHandler.getSpaces("uid")).append("name\n");
         for(User user : userRepository.findAll()){
-            result.append(user.toString()).append("\n");
+            result.append(user.toString());
         }
         return result.toString();
     }
 
-    public void createUser(){
+    public String createUser(String userName){
         try {
-            System.out.println("Enter user name:");
-            String userName = scan.nextLine();
             userRepository.save(new User(userName));
+            System.out.println("User was created successfully.");
+            return printUsers();
         } catch (Exception ex){
-            System.out.println("Failed to create new user! Error text: " + ex.getMessage());
+            return "Failed to create user! Error text: " + ex.getMessage();
         }
     }
 
-    public void updateUser(int id, String newName){
+    public String updateUser(int id, String parameter, String value){
         try{
             User currentUser = userRepository.findById(id).get();
-            currentUser.setName(newName);
+            switch(parameter.toLowerCase()){
+                case "name":
+                    currentUser.setName(value);
+                    userRepository.save(currentUser);
+                    break;
+                default:
+                    System.out.println("Unknown parameter!");
+            }
+            System.out.println("User was updated successfully.");
+            userRepository.save(currentUser);
+            return printUsers();
         } catch (Exception ex){
-            System.out.println("Failed to update user! Error text: " + ex.getMessage());
+            return "Failed to update user! Error text: " + ex.getMessage();
         }
     }
 
-    public void deleteById(int id){
+    public String deleteById(int id){
         try {
             userRepository.deleteById(id);
+            System.out.println("User was deleted successfully.");
+            return printUsers();
         } catch(Exception ex){
-            System.out.println("Failed to delete user! Error text: " + ex.getMessage());
+            return "Failed to delete user! Error text: " + ex.getMessage();
         }
     }
-
-    public void deleteByName(String userName){
-
+    public String findById(int uid){
+        return CmdHandler.getSpaces("uid") + "name\n" +
+                userRepository.findById(uid).get().toString();
     }
 }

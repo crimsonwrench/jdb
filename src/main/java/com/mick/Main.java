@@ -29,7 +29,7 @@ public class Main implements CommandLineRunner {
         System.out.println("Type \'help\' to print available commands.");
 
         while (true) {
-            handler.parse();
+            handler.Init();
         }
     }
 }

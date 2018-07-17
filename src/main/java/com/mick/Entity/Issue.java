@@ -1,6 +1,8 @@
 package com.mick.Entity;
 
 
+import com.mick.Utility.CmdHandler;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,7 +10,7 @@ import javax.persistence.*;
 public class Issue {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "issue_id")
     private int id;
 
@@ -53,7 +55,9 @@ public class Issue {
 
     @Override
     public String toString() {
-        return String.format("%d\t%d\t%d\t%s", id, project.getId(), user.getId(), reportText);
+        return  CmdHandler.getSpaces(String.valueOf(id)) +
+                CmdHandler.getSpaces(String.valueOf(project.getId())) +
+                CmdHandler.getSpaces(String.valueOf(user.getId())) + reportText + "\n";
     }
 
     public Issue(User user, Project project, String reportText) {

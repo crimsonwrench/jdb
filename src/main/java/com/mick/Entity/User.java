@@ -1,5 +1,7 @@
 package com.mick.Entity;
 
+import com.mick.Utility.CmdHandler;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -8,7 +10,7 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private int id;
 
@@ -43,12 +45,11 @@ public class User {
     }
 
     @Override
-    public String toString() {
-        return String.format("%d\t%s", getId(), getName());
-    }
+    public String toString() { return CmdHandler.getSpaces(String.valueOf(id)) + name + "\n"; }
 
     public User(String name) {
         this.name = name;
     }
     public User() {}
+
 }

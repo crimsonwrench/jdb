@@ -9,9 +9,11 @@ import java.util.Set;
 
 @Repository
 public interface IssueRepository extends CrudRepository<Issue, Integer> {
-    Set<Issue> findByUserName(String userName);
-
-    Set<Issue> findByProjectTitle(String projectTitle);
 
     Set<Issue> findByUserId(int userId);
+
+    Set<Issue> findByProjectId(int projectId);
+
+    Set<Issue> findByProjectIdAndUserId(int projectId, int userId);
+
 }

@@ -2,17 +2,14 @@ package com.mick.Service;
 
 import com.mick.Entity.Project;
 import com.mick.Repository.ProjectRepository;
+import com.mick.Utility.CmdHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Scanner;
 
 @Service
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-
-    private Scanner scan = new Scanner(System.in);
 
     @Autowired
     public ProjectService(ProjectRepository projectRepository) {
@@ -22,38 +19,52 @@ public class ProjectService {
     public String printProjects(){
         StringBuilder result = new StringBuilder();
 
-        result.append("pid\ttitle\n");
-
-        for(Project project : projectRepository.findAll()){
-            result.append(project.toString()).append("\n");
+        result.append(CmdHandler.getSpaces("pid")).append("title\n");
+        for(Project issue : projectRepository.findAll()){
+            result.append(issue.toString());
         }
         return result.toString();
     }
 
-    public void createProject(){
+    public String createProject(String title){
         try {
-            System.out.println("Enter project name: ");
-            String title = scan.nextLine();
             projectRepository.save(new Project(title));
+            System.out.println("Project was created successfully.");
+            return printProjects();
         } catch(Exception ex){
-            System.out.println("Failed to create new project! Error text: " + ex.getMessage());
+            return "Failed to create project! Error text: " + ex.getMessage();
         }
     }
 
-    public void updateProject(int id, String newTitle){
+    public String updateProject(int id, String parameter, String value){
         try{
             Project currentProject = projectRepository.findById(id).get();
-            currentProject.setTitle(newTitle);
+            switch(parameter.toLowerCase()){
+                case "title":
+                    currentProject.setTitle(value);
+                break;
+                default:
+                    System.out.println("Unknown parameter!");
+            }
+            projectRepository.save(currentProject);
+            System.out.println("Project was updated successfully.");
+            return printProjects();
         } catch (Exception ex){
-            System.out.println("Failed to update user! Error text: " + ex.getMessage());
+            return "Failed to update project! Error text: " + ex.getMessage();
         }
     }
-
-    public void deleteById(int id){
+    public String deleteById(int id){
         try {
             projectRepository.deleteById(id);
+            System.out.println("Project was deleted successfully.");
+            return printProjects();
         } catch(Exception ex){
-            System.out.println("Failed to delete a project! Error text: " + ex.getMessage());
+            return "Failed to delete project! Error text: " + ex.getMessage();
         }
+    }
+    public String findById(int uid){
+
+        return CmdHandler.getSpaces("pid") + "name\n" +
+                projectRepository.findById(uid).get().toString();
     }
 }
