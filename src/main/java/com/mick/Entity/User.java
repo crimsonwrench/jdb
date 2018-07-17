@@ -20,6 +20,11 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private Set<Issue> issues;
 
+    public User(String name) {
+        this.name = name;
+    }
+    public User() {}
+
     public int getId() {
         return id;
     }
@@ -46,10 +51,4 @@ public class User {
 
     @Override
     public String toString() { return CmdHandler.getSpaces(String.valueOf(id)) + name + "\n"; }
-
-    public User(String name) {
-        this.name = name;
-    }
-    public User() {}
-
 }

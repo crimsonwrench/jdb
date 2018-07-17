@@ -21,8 +21,14 @@ public class Issue {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
-
     private String reportText;
+
+    public Issue(User user, Project project, String reportText) {
+        this.user = user;
+        this.project = project;
+        this.reportText = reportText;
+    }
+    public Issue() {}
 
     public int getId() {
         return id;
@@ -59,11 +65,4 @@ public class Issue {
                 CmdHandler.getSpaces(String.valueOf(project.getId())) +
                 CmdHandler.getSpaces(String.valueOf(user.getId())) + reportText + "\n";
     }
-
-    public Issue(User user, Project project, String reportText) {
-        this.user = user;
-        this.project = project;
-        this.reportText = reportText;
-    }
-    public Issue() {}
 }
