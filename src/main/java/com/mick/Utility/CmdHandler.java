@@ -86,19 +86,16 @@ public class CmdHandler {
                     if(tokens.length < 3){
                         System.out.println("Usage: find <type> [parameters]. Type \'help find\' for help.");
                     } else {
-                        if(tokens[1].equals("issue") && tokens.length > 3){
-                            if(tokens[2].equals("all")) {
+                        if (tokens[1].equals("issue") && tokens.length > 3) {
+                            if (tokens[2].equals("all")) {
                                 System.out.println(findEntry(tokens[1], tokens[2], tokens[3], tokens[4]));
-                            }
-                            else {
+                            } else {
                                 System.out.println(findEntry(tokens[1], tokens[2], tokens[3], tokens[3]));
                             }
-                        }
-                        else if(tokens[1].equals("user") || tokens[1].equals("project")){
+                        } else if (tokens[1].equals("user") || tokens[1].equals("project")) {
                             System.out.println(findEntry(tokens[1], tokens[2], tokens[2], tokens[2]));
                         }
                     }
-
                     break;
                 case "list":
                     if(tokens.length < 2) {
@@ -114,6 +111,11 @@ public class CmdHandler {
                     } else {
                         displayHelp(tokens[1]);
                     }
+                    break;
+                case "load":
+                    System.out.println("Loading filesystem repository...");
+                    issueService.FillRepositories();
+                    System.out.println(listTable("all"));
                     break;
                 case "exit":
                     exit(0);

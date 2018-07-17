@@ -12,4 +12,4 @@
 .springBeans
 .sts4-cache
 
-*.db
+/db/h2

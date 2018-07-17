@@ -11,6 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.Arrays;
+import java.util.Scanner;
+
 @Service
 public class IssueService {
 
@@ -18,12 +24,59 @@ public class IssueService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
 
+    private Scanner scan = new Scanner(System.in);
+    private File usersFolder = new File("./db/Entities/Users");
+    private File projectsFolder = new File("./db/Entities/Projects");
+    private File issuesFolder = new File("./db/Entities/Issues");
 
     @Autowired
     public IssueService(IssueRepository issueRepository, UserRepository userRepository, ProjectRepository projectRepository) {
         this.issueRepository = issueRepository;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
+    }
+
+    public void FillRepositories()
+    {
+
+        File[] listOfUsers = usersFolder.listFiles();
+        File[] listOfProjects = projectsFolder.listFiles();
+        File[] listOfIssues = issuesFolder.listFiles();
+
+
+        if (listOfUsers != null) {
+            for (File user : listOfUsers) {
+                userRepository.save(new User(user.getName()));
+                System.out.println("Saving user " + user.getName());
+            }
+        }
+        if (listOfProjects != null) {
+            for (File project : listOfProjects) {
+                projectRepository.save(new Project(project.getName()));
+                System.out.println("Saving project " + project.getName());
+            }
+        }
+        if(listOfIssues != null) {
+            for (File issue : listOfIssues) {
+                System.out.println("Reading issue: " + issue.getName());
+                try (BufferedReader br = new BufferedReader(new FileReader(issue))) {
+                    StringBuilder result = new StringBuilder();
+                    String currentLine;
+
+                    while((currentLine = br.readLine()) != null) {
+                        result.append(currentLine).append("~");
+                    }
+
+                    String[] tokens = result.toString().split("~");
+
+                    createIssue(Integer.valueOf(tokens[0]), Integer.valueOf(tokens[1]), tokens[2]);
+                }
+                catch (Exception ex) {
+                    System.out.println("Failed to load issue: " +ex.getMessage());
+                }
+            }
+        }
+
     }
 
     public String findByUserId(@Param("user_id") int userId){
