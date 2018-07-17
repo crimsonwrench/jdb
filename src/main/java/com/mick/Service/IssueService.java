@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Arrays;
-import java.util.Scanner;
 
 @Service
 public class IssueService {
@@ -24,7 +22,6 @@ public class IssueService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
 
-    private Scanner scan = new Scanner(System.in);
     private File usersFolder = new File("./db/Entities/Users");
     private File projectsFolder = new File("./db/Entities/Projects");
     private File issuesFolder = new File("./db/Entities/Issues");
