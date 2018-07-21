@@ -1,5 +1,7 @@
 package com.mick.Entity;
 
+import com.mick.Utility.CmdHandler;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -7,13 +9,22 @@ import java.util.Set;
 @Table(name = "projects")
 public class Project {
 
-    private int id;
-    private String title;
-    private Set<Entry> entries;
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
+    private int id;
+
+    @Column(name = "project_title", length = 100, nullable = false)
+    private String title;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true)
+    private Set<Issue> issues;
+
+    public Project(String title) {
+        this.title = title;
+    }
+    public Project() {}
+
     public int getId() {
         return id;
     }
@@ -21,8 +32,6 @@ public class Project {
     public void setId(int id) {
         this.id = id;
     }
-
-    @Column(name = "project_title", length = 100, nullable = false)
 
     public String getTitle() {
         return title;
@@ -32,17 +41,14 @@ public class Project {
         this.title = title;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "project")
-    public Set<Entry> getEntries() {
-        return entries;
+    public Set<Issue> getIssues() {
+        return issues;
     }
 
-    public void setEntries(Set<Entry> entries) {
-        this.entries = entries;
+    public void setIssues(Set<Issue> issues) {
+        this.issues = issues;
     }
 
     @Override
-    public String toString() {
-        return String.format("%d\t%s", getId(), getTitle());
-    }
+    public String toString() { return CmdHandler.getSpaces(String.valueOf(id)) + title + "\n"; }
 }

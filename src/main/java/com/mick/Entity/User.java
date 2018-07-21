@@ -1,5 +1,7 @@
 package com.mick.Entity;
 
+import com.mick.Utility.CmdHandler;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -7,13 +9,22 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
 
-    private int id;
-    private String name;
-    private Set<Entry> entries;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
+    private int id;
+
+    @Column(name = "user_name", length = 100, nullable = false)
+    private String name;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    private Set<Issue> issues;
+
+    public User(String name) {
+        this.name = name;
+    }
+    public User() {}
+
     public int getId() {
         return id;
     }
@@ -22,7 +33,6 @@ public class User {
         this.id = id;
     }
 
-    @Column(name = "user_name", length = 100, nullable = false)
     public String getName() {
         return name;
     }
@@ -31,17 +41,14 @@ public class User {
         this.name = name;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    public Set<Entry> getEntries() {
-        return entries;
+    public Set<Issue> getIssues() {
+        return issues;
     }
 
-    public void setEntries(Set<Entry> entries) {
-        this.entries = entries;
+    public void setIssues(Set<Issue> issues) {
+        this.issues = issues;
     }
 
     @Override
-    public String toString() {
-        return String.format("%d\t%s", getId(), getName());
-    }
+    public String toString() { return CmdHandler.getSpaces(String.valueOf(id)) + name + "\n"; }
 }
