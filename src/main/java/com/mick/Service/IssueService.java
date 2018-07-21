@@ -11,9 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.util.NoSuchElementException;
 
 @Service
 public class IssueService {
@@ -22,8 +21,6 @@ public class IssueService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
 
-    private File usersFolder = new File("./db/Entities/Users");
-    private File projectsFolder = new File("./db/Entities/Projects");
     private File issuesFolder = new File("./db/Entities/Issues");
 
     @Autowired
@@ -33,47 +30,36 @@ public class IssueService {
         this.projectRepository = projectRepository;
     }
 
-    public void FillRepositories()
+    public String loadIssues()
     {
+        File[] listOfIssues = issuesFolder.listFiles((issuesFolder, name) -> name.toLowerCase().contains("issue"));
 
-        File[] listOfUsers = usersFolder.listFiles();
-        File[] listOfProjects = projectsFolder.listFiles();
-        File[] listOfIssues = issuesFolder.listFiles();
-
-
-        if (listOfUsers != null) {
-            for (File user : listOfUsers) {
-                userRepository.save(new User(user.getName()));
-                System.out.println("Saving user " + user.getName());
-            }
-        }
-        if (listOfProjects != null) {
-            for (File project : listOfProjects) {
-                projectRepository.save(new Project(project.getName()));
-                System.out.println("Saving project " + project.getName());
-            }
-        }
         if(listOfIssues != null) {
             for (File issue : listOfIssues) {
-                System.out.println("Reading issue: " + issue.getName());
                 try (BufferedReader br = new BufferedReader(new FileReader(issue))) {
                     StringBuilder result = new StringBuilder();
                     String currentLine;
 
-                    while((currentLine = br.readLine()) != null) {
-                        result.append(currentLine).append("~");
+                    while ((currentLine = br.readLine()) != null) {
+                        result.append(currentLine);
                     }
 
-                    String[] tokens = result.toString().split("~");
+                    String[] tokens = result.toString().split(";");
+                    System.out.println(issue.getName() + ": pid="+tokens[0]+" uid="+tokens[1]+" text="+tokens[2]);
 
-                    createIssue(Integer.valueOf(tokens[0]), Integer.valueOf(tokens[1]), tokens[2]);
-                }
-                catch (Exception ex) {
-                    System.out.println("Failed to load issue: " +ex.getMessage());
+
+                    Project project = projectRepository.findById(Integer.valueOf(tokens[0])).get();
+                    User user = userRepository.findById(Integer.valueOf(tokens[1])).get();
+
+                    issueRepository.save(new Issue(project, user, tokens[2]));
+                } catch (IOException ex) {
+                    System.out.println("Failed to load an issue " + issue.getName() + "! Error text: " + ex.getMessage());
+                } catch (NoSuchElementException ex) {
+                    System.out.println("Could not create an issue: missing user, project or both with such IDs!");
                 }
             }
         }
-
+        return "\n" + printIssues();
     }
 
     public String findByUserId(@Param("user_id") int userId){
@@ -122,11 +108,11 @@ public class IssueService {
         try {
             User user = userRepository.findById(uid).get();
             Project project = projectRepository.findById(pid).get();
-            issueRepository.save(new Issue(user, project, text));
-            System.out.println("Issue was created successfully.");
+            issueRepository.save(new Issue(project, user, text));
+            System.out.println("An issue was created successfully.");
             return printIssues();
         } catch (Exception ex){
-            return "Failed to create issue! Error text: " + ex.getMessage();
+            return "Failed to create an issue! Error text: " + ex.getMessage();
         }
     }
     public String updateIssue(int eid, String parameter, String value) {
@@ -150,7 +136,7 @@ public class IssueService {
             System.out.println("Issue was updated successfully.");
             return printIssues();
         } catch(Exception ex){
-            return "Failed to update issue! Error text: " + ex.getMessage();
+            return "Failed to update an issue! Error text: " + ex.getMessage();
         }
     }
     public String deleteById(int id){
@@ -159,7 +145,7 @@ public class IssueService {
             System.out.println("Issue was deleted successfully.");
             return printIssues();
         } catch(Exception ex){
-            return "Failed to delete issue! Error text: " + ex.getMessage();
+            return "Failed to delete an issue! Error text: " + ex.getMessage();
         }
     }
 }

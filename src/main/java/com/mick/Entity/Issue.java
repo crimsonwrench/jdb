@@ -23,7 +23,7 @@ public class Issue {
     private Project project;
     private String reportText;
 
-    public Issue(User user, Project project, String reportText) {
+    public Issue(Project project, User user, String reportText) {
         this.user = user;
         this.project = project;
         this.reportText = reportText;

@@ -6,10 +6,13 @@ import com.mick.Utility.CmdHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+
 @Service
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private File projectsFolder = new File("./db/Entities/Projects");
 
     @Autowired
     public ProjectService(ProjectRepository projectRepository) {
@@ -24,6 +27,19 @@ public class ProjectService {
             result.append(issue.toString());
         }
         return result.toString();
+    }
+
+    public String loadProjects(){
+
+        File[] listOfProjects = projectsFolder.listFiles((projectsFolder, name) -> name.toLowerCase().endsWith(".pr"));
+
+        if (listOfProjects != null) {
+            for (File project : listOfProjects) {
+                    projectRepository.save(new Project(project.getName().substring(0, project.getName().length() - 3)));
+                    System.out.println("Loading project " + project.getAbsolutePath());
+            }
+        }
+        return "\n" + printProjects();
     }
 
     public String createProject(String title){

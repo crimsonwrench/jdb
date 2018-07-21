@@ -6,10 +6,13 @@ import com.mick.Utility.CmdHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private File usersFolder = new File("./db/Entities/Users");
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -24,6 +27,19 @@ public class UserService {
             result.append(user.toString());
         }
         return result.toString();
+    }
+
+    public String loadUsers(){
+
+        File[] listOfUsers = usersFolder.listFiles((usersFolder, name) -> name.toLowerCase().endsWith(".us"));
+
+        if (listOfUsers != null) {
+            for (File user : listOfUsers) {
+                userRepository.save(new User(user.getName().substring(0, user.getName().length()-3)));
+                System.out.println("Loading user " + user.getAbsolutePath());
+            }
+        }
+        return "\n" + printUsers();
     }
 
     public String createUser(String userName){

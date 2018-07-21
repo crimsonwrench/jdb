@@ -28,7 +28,7 @@ public class CmdHandler {
         StringBuilder result = new StringBuilder();
         result.append(word);
         for (int i = word.length(); i < 8; i++) {
-            if (i == 6) {
+            if (i == 5) {
                 result.append("|");
             } else {
                 result.append(" ");
@@ -58,7 +58,7 @@ public class CmdHandler {
                             for(int i = 3; i < tokens.length; i++){
                                 tokens[2] += " " + tokens[i];
                             }
-                            System.out.println(createEntry(tokens[1], tokens[2], tokens[2], tokens[2]));
+                            System.out.println(createEntry(tokens[1], tokens[2]));
                         }
                     }
                     break;
@@ -90,16 +90,16 @@ public class CmdHandler {
                             if (tokens[2].equals("all")) {
                                 System.out.println(findEntry(tokens[1], tokens[2], tokens[3], tokens[4]));
                             } else {
-                                System.out.println(findEntry(tokens[1], tokens[2], tokens[3], tokens[3]));
+                                System.out.println(findEntry(tokens[1], tokens[2], tokens[3]));
                             }
                         } else if (tokens[1].equals("user") || tokens[1].equals("project")) {
-                            System.out.println(findEntry(tokens[1], tokens[2], tokens[2], tokens[2]));
+                            System.out.println(findEntry(tokens[1], tokens[2]));
                         }
                     }
                     break;
                 case "list":
                     if(tokens.length < 2) {
-                        System.out.println("Usage: list <table>. Tables available: users, projects, issues, all.");
+                        System.out.println("Usage: list <table>. Tables available: issues, users, projects, all.");
                     } else {
                         System.out.println(listTable(tokens[1]));
                     }
@@ -113,9 +113,11 @@ public class CmdHandler {
                     }
                     break;
                 case "load":
-                    System.out.println("Loading filesystem repository...");
-                    issueService.FillRepositories();
-                    System.out.println(listTable("all"));
+                    if(tokens.length < 2){
+                        System.out.println("Usage: load <table>. Tables available: issues, users, project, all.");
+                    } else {
+                        System.out.println(loadTable(tokens[1]));
+                    }
                     break;
                 case "exit":
                     exit(0);
@@ -154,11 +156,12 @@ public class CmdHandler {
                 System.out.println("        \'uid    - <uid>\'            - finds all issues made by user with id <uid> ");
                 System.out.println("        \'pid    - <pid>\'            - finds all issues made in project with id <pid>");
                 System.out.println("        \'all    - <pid> <uid>\'      - finds all issues made by user with id <uid> in project with id <pid>");
-
                 break;
             case "list":
                 System.out.println("\'list <table>\'  - where <table> is a table to be displayed: issues, users, projects, all.");
                 break;
+            case "load":
+                System.out.println("\'load <table>\' - where <table> is a table to be loaded from filesystem (.db/Entities folder): issues, users, projects, all.");
             default:
                 System.out.println("Unknown command!");
                 break;
@@ -190,14 +193,14 @@ public class CmdHandler {
                 return "Wrong table!";
         }
     }
-    private String createEntry(String type, String parameterOne, String parameterTwo, String parameterThree){
-        switch(type.toLowerCase()){
+    private String createEntry(String... args){
+        switch(args[0].toLowerCase()){
             case "user":
-                return userService.createUser(parameterOne);
+                return userService.createUser(args[1]);
             case "project":
-               return  projectService.createProject(parameterOne);
+               return  projectService.createProject(args[1]);
             case "issue":
-                return issueService.createIssue(Integer.valueOf(parameterOne), Integer.valueOf(parameterTwo), parameterThree);
+                return issueService.createIssue(Integer.valueOf(args[1]), Integer.valueOf(args[2]), args[3]);
             default:
                 return "Wrong type!";
         }
@@ -214,25 +217,40 @@ public class CmdHandler {
                 return "Wrong type!";
         }
     }
-    private String findEntry(String type, String parameterOne, String parameterTwo, String parameterThree){
-        switch(type.toLowerCase()){
+    private String findEntry(String... args){
+        switch(args[0].toLowerCase()){
             case "user":
-                return userService.findById(Integer.valueOf(parameterOne));
+                return userService.findById(Integer.valueOf(args[1]));
             case "project":
-                return projectService.findById(Integer.valueOf(parameterOne));
+                return projectService.findById(Integer.valueOf(args[1]));
             case "issue":
-                switch(parameterOne.toLowerCase()){
+                switch(args[1].toLowerCase()){
                     case "uid":
-                        return issueService.findByUserId(Integer.valueOf(parameterTwo));
+                        return issueService.findByUserId(Integer.valueOf(args[2]));
                     case "pid":
-                        return issueService.findByProjectId(Integer.valueOf(parameterTwo));
+                        return issueService.findByProjectId(Integer.valueOf(args[2]));
                     case "all":
-                        return issueService.findByProjectIdAndUserId(Integer.valueOf(parameterTwo), Integer.valueOf(parameterThree));
+                        return issueService.findByProjectIdAndUserId(Integer.valueOf(args[2]), Integer.valueOf(args[3]));
                         default:
                         return "Wrong criteria!";
                 }
             default:
                 return "Wrong type!";
+        }
+    }
+    private String loadTable(String table){
+        switch(table.toLowerCase()){
+            case "users":
+                return userService.loadUsers();
+            case "projects":
+                return projectService.loadProjects();
+            case "issues":
+                return issueService.loadIssues();
+            case "all":
+                return userService.loadUsers() + "\n" + projectService.loadProjects() + "\n" + issueService.loadIssues();
+            default:
+                return "Wrong parameter!";
+
         }
     }
 }
